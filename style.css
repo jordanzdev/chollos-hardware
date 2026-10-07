@@ -1,0 +1,29 @@
+:root{--bg:#f6f7f9;--card:#fff;--text:#16181d;--muted:#5b6270;--accent:#e8590c;--accent-2:#ff922b;--border:#e3e6ea}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#171a21;--text:#e8eaee;--muted:#9aa3b2;--border:#262b35}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+header{border-bottom:1px solid var(--border);background:var(--card)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.25rem;text-decoration:none;color:var(--text)}
+.logo span{color:var(--accent)}
+nav a{margin-left:14px;color:var(--muted);text-decoration:none;font-size:.95rem}
+nav a:hover{color:var(--text)}
+.hero{padding:48px 0 24px}
+.hero h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.15;margin:0 0 12px}
+.hero p{color:var(--muted);font-size:1.1rem;margin:0 0 20px;max-width:640px}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:600}
+.btn:hover{background:var(--accent-2)}
+h2{margin:40px 0 12px;font-size:1.4rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.card h3{margin:0 0 6px;font-size:1.05rem}
+.card p{margin:0;color:var(--muted);font-size:.95rem}
+.deals:empty::before{content:"Publicando las primeras ofertas muy pronto.";color:var(--muted)}
+.deal .meta{font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.deal .btn{margin-top:12px;font-size:.95rem}
+.disclosure{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:12px 16px;font-size:.92rem;color:var(--muted);margin:32px 0}
+footer{border-top:1px solid var(--border);margin-top:48px;padding:24px 0;color:var(--muted);font-size:.9rem}
+footer a{color:var(--muted);margin-right:14px}
+.page h1{margin-top:36px}
