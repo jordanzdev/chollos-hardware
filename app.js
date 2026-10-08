@@ -2,6 +2,7 @@
 // - fechas relativas y aviso de oferta antigua      - favoritos (❤) y compartir
 // - portada: búsqueda instantánea, orden, guardadas, "ver más" y ofertas nuevas en directo (deals.json)
 // - service worker: instalable como app y funciona sin conexión
+// - página de oferta: barra de compra fija en móvil · medición sin cookies (data-track, apagada sin endpoint)
 (function () {
   "use strict";
   var root = document.body.getAttribute("data-root") || "./";
@@ -28,6 +29,33 @@
     setTimeout(function () { t.classList.add("in"); }, 10);
     if (!action) setTimeout(function () { t.remove(); }, 3500);
   }
+
+  // ---------------------------------------------------------------- medición (sin cookies)
+  // Cada evento se añade a window.techollosEvents (útil para depurar) y, solo si la página declara
+  // <meta name="analytics" content="URL">, se envía con sendBeacon a ese endpoint (p. ej. GoatCounter).
+  // Nada de identificadores: solo el nombre del evento, la página y datos del propio evento.
+  var endpointMeta = document.querySelector('meta[name="analytics"]');
+  var endpoint = endpointMeta ? endpointMeta.getAttribute("content") : "";
+  window.techollosEvents = window.techollosEvents || [];
+  function track(name, props) {
+    var ev = { e: name, p: location.pathname, t: Date.now() };
+    for (var k in props || {}) ev[k] = props[k];
+    window.techollosEvents.push(ev);
+    if (!endpoint || !navigator.sendBeacon) return;
+    try { navigator.sendBeacon(endpoint, JSON.stringify(ev)); } catch (e) {}
+  }
+  // clics en enlaces marcados (Amazon, Telegram) — se registran también los de tarjetas pintadas por JS
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest && ev.target.closest("[data-track]");
+    if (a) track(a.getAttribute("data-track") + "_click", { place: a.getAttribute("data-place") || "", slug: a.getAttribute("data-slug") || "" });
+  }, true);
+  // profundidad de scroll: 50 % y 90 %, una vez por página
+  var depthSent = {};
+  window.addEventListener("scroll", function () {
+    var h = document.documentElement, pct = (h.scrollTop + innerHeight) / h.scrollHeight * 100;
+    [50, 90].forEach(function (m) { if (pct >= m && !depthSent[m]) { depthSent[m] = 1; track("scroll", { depth: m }); } });
+  }, { passive: true });
+  window.addEventListener("error", function (ev) { track("js_error", { msg: String(ev.message).slice(0, 120) }); });
 
   // ---------------------------------------------------------------- fechas
   var rtf = window.Intl && Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat("es", { numeric: "auto" }) : null;
@@ -70,6 +98,7 @@
         store(FKEY, favs);
         document.querySelectorAll('[data-fav="' + slug + '"]').forEach(function (x) { x.setAttribute("aria-pressed", isFav(slug)); });
         toast(isFav(slug) ? "Guardada en tus ofertas ❤" : "Quitada de guardadas");
+        track("fav", { slug: slug, on: isFav(slug) });
         if (index && index.state.favs) index.render();
       });
     });
@@ -79,6 +108,7 @@
   document.querySelectorAll("[data-share]").forEach(function (b) {
     b.addEventListener("click", function () {
       var data = { title: b.getAttribute("data-share"), url: location.href.split("#")[0] };
+      track("share", { api: !!navigator.share });
       if (navigator.share) { navigator.share(data).catch(function () {}); return; }
       (navigator.clipboard ? navigator.clipboard.writeText(data.url) : Promise.reject())
         .then(function () { toast("Enlace copiado"); }, function () { prompt("Copia el enlace:", data.url); });
@@ -103,14 +133,16 @@
     function tpl(sel) { var t = sprite.querySelector(sel); return t ? t.innerHTML : ""; }
     function card(d) {
       return '<article class="card deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' +
-        '<a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '.html" aria-label="' + esc(d.t) + '"></a>' +
-        '<button class="fav" type="button" data-fav="' + esc(d.s) + '" aria-pressed="false" aria-label="Guardar oferta">' + tpl('[data-icon="heart"]') + "</button>" +
         '<div class="deal-top">' + (tpl('[data-tile="' + d.c + '"]') || tpl('[data-tile="otro"]')) +
         '<div class="deal-meta"><span class="badge">' + esc(d.n) + '</span><time datetime="' + esc(d.d) + '" data-rel>' +
         new Date(d.d).toLocaleDateString("es-ES") + "</time></div></div>" +
-        '<h3 class="deal-title">' + esc(d.t) + '</h3><p class="deal-sum">' + esc(d.m) + "</p>" +
+        '<h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '.html">' + esc(d.t) + "</a></h3>" +
+        '<p class="deal-sum">' + esc(d.m) + "</p>" +
         '<div class="deal-foot"><span class="store">Amazon</span><a class="btn btn-buy btn-sm" href="' + esc(d.u) +
-        '" rel="sponsored nofollow noopener" target="_blank">Ver precio ' + tpl('[data-icon="arrow"]') + "</a></div></article>";
+        '" rel="sponsored nofollow noopener" target="_blank" data-track="amazon" data-place="card" data-slug="' + esc(d.s) +
+        '">Ver precio<span class="sr-only"> de ' + esc(d.t) + " en Amazon (abre en otra pestaña)</span> " + tpl('[data-icon="arrow"]') + "</a></div>" +
+        '<button class="fav" type="button" data-fav="' + esc(d.s) + '" aria-pressed="false" aria-label="Guardar: ' + esc(d.t) + '">' +
+        tpl('[data-icon="heart"]') + "</button></article>";
     }
     function list() {
       var s = me.state, words = norm(s.q).split(/\s+/).filter(Boolean);
@@ -148,10 +180,15 @@
     var custom = function () { var s = me.state; return s.q || s.favs || s.sort !== "recent"; };
 
     input.value = me.state.q; sel.value = me.state.sort; favBtn.setAttribute("aria-pressed", me.state.favs);
-    var timer;
+    var timer, qTimer;
     input.addEventListener("input", function () {
       clearTimeout(timer);
       timer = setTimeout(function () { me.state.q = input.value.trim(); me.state.limit = PAGE; me.render(); }, 120);
+      clearTimeout(qTimer);
+      qTimer = setTimeout(function () {
+        var q = input.value.trim();
+        if (q.length >= 3) track("search", { q: q.toLowerCase().slice(0, 60), n: list().length });
+      }, 1500);
     });
     sel.addEventListener("change", function () { me.state.sort = sel.value; me.state.limit = PAGE; me.render(); });
     favBtn.addEventListener("click", function () {
@@ -177,6 +214,19 @@
       });
     }, POLL_MS);
     return me;
+  }
+
+  // ---------------------------------------------------------------- barra de compra (página de oferta, móvil)
+  var buy = document.getElementById("buy"), bar = document.getElementById("buybar");
+  if (buy && bar && "IntersectionObserver" in window) {
+    document.body.classList.add("has-buybar");
+    var barLink = bar.querySelector("a");
+    new IntersectionObserver(function (es) {
+      var show = !es[0].isIntersecting && es[0].boundingClientRect.top < 0;
+      bar.classList.toggle("in", show);
+      bar.setAttribute("aria-hidden", !show);
+      barLink.tabIndex = show ? 0 : -1;
+    }).observe(buy);
   }
 
   // ---------------------------------------------------------------- arranque
