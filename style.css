@@ -218,6 +218,13 @@ p{text-wrap:pretty}
 .check li svg{color:var(--accent-text);margin-top:4px}
 @media (min-width:768px){.deal-page{grid-template-columns:280px 1fr;gap:40px;padding-top:28px}.deal-visual{max-width:none}}
 
+/* para quién es y puntos fuertes */
+.points{margin:-4px 0 22px;display:grid;gap:12px}
+.who{margin:0;padding:12px 14px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-sm) var(--r-sm) 0;font-size:.97rem}
+.points ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.points li{display:inline-flex;align-items:center;gap:6px;padding:.35em .75em;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:.9rem;font-weight:600}
+.points li svg{color:var(--accent-text)}
+
 /* barra de compra fija (solo móvil, aparece al pasar el botón principal) */
 .buybar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 24px -12px rgba(0,0,0,.25);padding:10px 0 calc(10px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .2s}
 .buybar.in{transform:none}
