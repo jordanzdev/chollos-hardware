@@ -203,6 +203,7 @@
     });
     if (moreBtn) moreBtn.addEventListener("click", function () { me.state.limit += PAGE; me.render(); });
     if (location.hash === "#buscar") setTimeout(function () { input.focus(); }, 50);
+    window.addEventListener("hashchange", function () { if (location.hash === "#buscar") input.focus(); });
 
     // Las tarjetas ya vienen pintadas en el HTML (rápido y bueno para Google); el JSON añade el resto.
     load(function () { if (custom()) me.render(); });
@@ -221,6 +222,17 @@
       });
     }, POLL_MS);
     return me;
+  }
+
+  // ---------------------------------------------------------------- menú lateral
+  var menu = document.getElementById("menu");
+  if (menu && menu.showModal) {
+    document.querySelectorAll("[data-menu-open]").forEach(function (b) {
+      b.addEventListener("click", function () { menu.showModal(); track("menu_open", {}); });
+    });
+    menu.addEventListener("click", function (ev) {
+      if (ev.target === menu || ev.target.closest("[data-menu-close]")) menu.close();  // fondo, ✕ o enlace interno
+    });
   }
 
   // ---------------------------------------------------------------- barra de compra (página de oferta, móvil)
