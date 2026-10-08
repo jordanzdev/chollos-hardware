@@ -133,7 +133,8 @@
     function tpl(sel) { var t = sprite.querySelector(sel); return t ? t.innerHTML : ""; }
     function media(d) {
       var specs = d.x || [], cat = document.getElementById("il-" + d.c) ? d.c : "otro";
-      var visual = d.i ? '<img src="' + esc(d.i) + '" alt="' + esc(d.t) + '" width="500" height="500" loading="lazy" decoding="async">' :
+      var src = d.i && !/^https?:/.test(d.i) ? root + d.i : d.i;  // foto propia (ruta de la web) u oficial (Amazon)
+      var visual = src ? '<img src="' + esc(src) + '" alt="' + esc(d.t) + '" width="500" height="500" loading="lazy" decoding="async">' :
         '<svg class="il" viewBox="0 0 240 160" aria-hidden="true" focusable="false"><use href="#il-' + cat + '"/></svg>';
       return '<div class="media' + (specs.length ? " has-specs" : "") + '" style="--h:' + (d.h || 24) + '">' + visual +
         (specs.length ? '<ul class="specs" aria-label="Datos clave">' + specs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
