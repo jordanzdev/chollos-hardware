@@ -131,11 +131,18 @@
       state: { q: params.get("q") || "", sort: params.get("orden") || "recent", favs: params.get("guardadas") === "1", limit: PAGE }
     };
     function tpl(sel) { var t = sprite.querySelector(sel); return t ? t.innerHTML : ""; }
+    function media(d) {
+      var specs = d.x || [], cat = document.getElementById("il-" + d.c) ? d.c : "otro";
+      var visual = d.i ? '<img src="' + esc(d.i) + '" alt="' + esc(d.t) + '" width="500" height="500" loading="lazy" decoding="async">' :
+        '<svg class="il" viewBox="0 0 240 160" aria-hidden="true" focusable="false"><use href="#il-' + cat + '"/></svg>';
+      return '<div class="media' + (specs.length ? " has-specs" : "") + '" style="--h:' + (d.h || 24) + '">' + visual +
+        (specs.length ? '<ul class="specs" aria-label="Datos clave">' + specs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
+        "</div>";
+    }
     function card(d) {
-      return '<article class="card deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' +
-        '<div class="deal-top">' + (tpl('[data-tile="' + d.c + '"]') || tpl('[data-tile="otro"]')) +
+      return '<article class="card deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' + media(d) +
         '<div class="deal-meta"><span class="badge">' + esc(d.n) + '</span><time datetime="' + esc(d.d) + '" data-rel>' +
-        new Date(d.d).toLocaleDateString("es-ES") + "</time></div></div>" +
+        new Date(d.d).toLocaleDateString("es-ES") + "</time></div>" +
         '<h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '.html">' + esc(d.t) + "</a></h3>" +
         '<p class="deal-sum">' + esc(d.m) + "</p>" +
         '<div class="deal-foot"><span class="store">Amazon</span><a class="btn btn-buy btn-sm" href="' + esc(d.u) +
