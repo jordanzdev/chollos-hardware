@@ -1,5 +1,5 @@
-const V = "techollos-20261008202645";
-const CORE = ["./", "style.css", "app.js", "favicon.svg", "manifest.webmanifest", "img/icon-192.png"];
+const V = "techollos-20261009150034";
+const CORE = ["./", "style.css", "app.js", "fonts/archivo-tech.woff2", "favicon.svg", "manifest.webmanifest", "img/icon-192.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(V).then(c => c.addAll(CORE))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))));

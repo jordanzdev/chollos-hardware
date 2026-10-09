@@ -131,24 +131,27 @@
       state: { q: params.get("q") || "", sort: params.get("orden") || "recent", favs: params.get("guardadas") === "1", limit: PAGE }
     };
     function tpl(sel) { var t = sprite.querySelector(sel); return t ? t.innerHTML : ""; }
-    function media(d) {
+    // Misma «placa de datos» que genera site_render.plate()
+    function plate(d) {
       var specs = d.x || [], cat = document.getElementById("il-" + d.c) ? d.c : "otro";
       var src = d.i && !/^https?:/.test(d.i) ? root + d.i : d.i;  // foto propia (ruta de la web) u oficial (Amazon)
       var visual = src ? '<img src="' + esc(src) + '" alt="' + esc(d.t) + '" width="500" height="500" loading="lazy" decoding="async">' :
         '<svg class="il" viewBox="0 0 240 160" aria-hidden="true" focusable="false"><use href="#il-' + cat + '"/></svg>';
-      return '<div class="media' + (specs.length ? " has-specs" : "") + '" style="--h:' + (d.h || 24) + '">' + visual +
-        (specs.length ? '<ul class="specs" aria-label="Datos clave">' + specs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
+      return '<div class="plate' + (src ? " has-img" : "") + '" style="--h:' + (d.h || 24) + '">' +
+        '<p class="plate-cat" aria-hidden="true"><span class="code"></span>' + esc(d.n) + "</p>" +
+        (d.b ? '<p class="plate-brand" aria-hidden="true">' + esc(d.b) + "</p>" : "") +
+        '<div class="plate-visual">' + visual + "</div>" +
+        (specs.length ? '<ul class="plate-specs" aria-label="Datos clave">' + specs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
         "</div>";
     }
     function card(d) {
-      return '<article class="card deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' + media(d) +
-        '<div class="deal-meta"><span class="badge">' + esc(d.n) + '</span><time datetime="' + esc(d.d) + '" data-rel>' +
-        new Date(d.d).toLocaleDateString("es-ES") + "</time></div>" +
-        '<h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '.html">' + esc(d.t) + "</a></h3>" +
+      return '<article class="deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' + plate(d) +
+        '<div class="deal-body"><h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '.html">' + esc(d.t) + "</a></h3>" +
         '<p class="deal-sum">' + esc(d.m) + "</p>" +
-        '<div class="deal-foot"><span class="store">Amazon</span><a class="btn btn-buy btn-sm" href="' + esc(d.u) +
-        '" rel="sponsored nofollow noopener" target="_blank" data-track="amazon" data-place="card" data-slug="' + esc(d.s) +
-        '">Ver precio<span class="sr-only"> de ' + esc(d.t) + " en Amazon (abre en otra pestaña)</span> " + tpl('[data-icon="arrow"]') + "</a></div>" +
+        '<div class="deal-foot"><p class="deal-meta"><span>Amazon</span><time datetime="' + esc(d.d) + '" data-rel>' +
+        new Date(d.d).toLocaleDateString("es-ES") + "</time></p>" +
+        '<a class="btn btn-buy btn-sm" href="' + esc(d.u) + '" rel="sponsored nofollow noopener" target="_blank" data-track="amazon" data-place="card" data-slug="' + esc(d.s) +
+        '">Ver precio<span class="sr-only"> de ' + esc(d.t) + " en Amazon (abre en otra pestaña)</span> " + tpl('[data-icon="arrow"]') + "</a></div></div>" +
         '<button class="fav" type="button" data-fav="' + esc(d.s) + '" aria-pressed="false" aria-label="Guardar: ' + esc(d.t) + '">' +
         tpl('[data-icon="heart"]') + "</button></article>";
     }
@@ -238,15 +241,24 @@
 
   // ---------------------------------------------------------------- barra de compra (página de oferta, móvil)
   var buy = document.getElementById("buy"), bar = document.getElementById("buybar");
-  if (buy && bar && "IntersectionObserver" in window) {
+  if (buy && bar) {
+    // Se comprueba la posición en cada desplazamiento (no solo al cruzar el botón): así también aparece al volver
+    // atrás o al restaurar la posición de la página, que saltan directamente más abajo del botón.
     document.body.classList.add("has-buybar");
-    var barLink = bar.querySelector("a");
-    new IntersectionObserver(function (es) {
-      var show = !es[0].isIntersecting && es[0].boundingClientRect.top < 0;
+    var barLink = bar.querySelector("a"), shown = null, ticking = false;
+    var updateBar = function () {
+      ticking = false;
+      var show = buy.getBoundingClientRect().bottom < 0;
+      if (show === shown) return;
+      shown = show;
       bar.classList.toggle("in", show);
       bar.setAttribute("aria-hidden", !show);
       barLink.tabIndex = show ? 0 : -1;
-    }).observe(buy);
+    };
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(updateBar); }
+    }, { passive: true });
+    updateBar();
   }
 
   // ---------------------------------------------------------------- arranque
