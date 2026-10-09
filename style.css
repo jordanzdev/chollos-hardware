@@ -331,6 +331,25 @@ body.has-buybar .foot{padding-bottom:72px}
 .subnav a[aria-current="page"] span{color:inherit;opacity:.75}
 @media (min-width:768px){.subnav{flex-wrap:wrap;overflow:visible}}
 
+/* Premium */
+.nav-premium{color:var(--signal-text)!important;font-weight:700!important}
+.band-premium{background:var(--signal);color:var(--signal-ink)}
+.band-premium .band-icon{background:var(--signal-ink);color:var(--signal)}
+.band-premium .band-icon svg{fill:currentColor}
+.band-premium .label{color:inherit;opacity:.8}
+.btn-light-outline{border:1px solid currentColor;color:inherit;background:transparent}
+.btn-light-outline:hover{background:color-mix(in srgb,currentColor 12%,transparent)}
+.premium .compare{width:100%;margin:28px 0 8px;border-collapse:collapse;font-size:.97rem}
+.compare th,.compare td{padding:12px 8px;border-bottom:1px solid var(--rule);text-align:center;vertical-align:middle}
+.compare thead th:first-child{text-align:left}
+.compare thead th{border-bottom:2px solid var(--ink);font-size:var(--fs-label);font-weight:650;font-stretch:80%;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.compare thead th:last-child{color:var(--signal-text)}
+.compare tbody th{text-align:left;font-weight:500;color:var(--ink-2)}
+.compare td:last-child{background:var(--signal-soft)}
+.compare .ok{font-weight:800;color:var(--signal-text);font-size:1.1rem}
+.compare .no{color:var(--muted)}
+.menu-links small{margin-left:6px;padding:.1em .45em;border-radius:var(--r-xs);background:var(--signal-soft);color:var(--signal-text);font-size:.72rem;font-weight:700}
+
 /* guías */
 .guides{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:16px}
 @media (min-width:768px){.guides{grid-template-columns:repeat(2,minmax(0,1fr))}}
