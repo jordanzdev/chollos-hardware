@@ -138,7 +138,7 @@
       var visual = src ? '<img src="' + esc(src) + '" alt="' + esc(d.t) + '" width="500" height="500" loading="lazy" decoding="async">' :
         '<svg class="il" viewBox="0 0 240 160" aria-hidden="true" focusable="false"><use href="#il-' + cat + '"/></svg>';
       return '<div class="plate' + (src ? " has-img" : "") + '" style="--h:' + (d.h || 24) + '">' +
-        '<p class="plate-cat" aria-hidden="true"><span class="code"></span>' + esc(d.n) + "</p>" +
+        '<p class="plate-cat" aria-hidden="true"><span class="code"></span>' + esc(d.sc || d.n) + "</p>" +
         (d.b ? '<p class="plate-brand" aria-hidden="true">' + esc(d.b) + "</p>" : "") +
         '<div class="plate-visual">' + visual + "</div>" +
         (specs.length ? '<ul class="plate-specs" aria-label="Datos clave">' + specs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
@@ -160,7 +160,7 @@
       var out = me.deals.filter(function (d) {
         if (s.favs && !isFav(d.s)) return false;
         if (!words.length) return true;
-        var hay = norm(d.t + " " + d.m + " " + d.n);
+        var hay = norm(d.t + " " + d.m + " " + d.n + " " + (d.sc || ""));
         return words.every(function (w) { return hay.indexOf(w) !== -1; });
       });
       if (s.sort === "az") out.sort(function (a, b) { return a.t.localeCompare(b.t, "es"); });
