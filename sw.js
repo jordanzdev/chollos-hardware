@@ -1,4 +1,4 @@
-const V = "techollos-20261009150034";
+const V = "techollos-20261009160804";
 const CORE = ["./", "style.css", "app.js", "fonts/archivo-tech.woff2", "favicon.svg", "manifest.webmanifest", "img/icon-192.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(V).then(c => c.addAll(CORE))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
