@@ -1,7 +1,7 @@
 {
- "name": "Techollos",
- "short_name": "Techollos",
- "description": "Chollos de tecnología seleccionados a mano",
+ "name": "Brevazo",
+ "short_name": "Brevazo",
+ "description": "Las ofertas que merecen la pena, seleccionadas a mano",
  "lang": "es",
  "start_url": "./",
  "scope": "./",

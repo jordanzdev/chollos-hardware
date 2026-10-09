@@ -1,9 +1,9 @@
-/* Techollos — «La placa de datos». Sistema documentado en docs/design/design-system.md (fuera de este repo).
-   Tinta, papel y una señal naranja · Archivo variable · reglas en vez de cajas · sombras solo en lo que flota. */
+/* Brevazo — «La placa de datos». Sistema documentado en docs/design/design-system.md (fuera de este repo).
+   Tinta, papel y el morado de la breva · Archivo variable · reglas en vez de cajas · sombras solo en lo que flota. */
 @font-face{font-family:"Archivo";src:url("fonts/archivo-tech.woff2") format("woff2");font-weight:400 850;font-stretch:75% 112%;font-display:optional}
 :root{
   --paper:#f4f3ef; --paper-2:#eae8e1; --surface:#fff; --ink:#111214; --ink-2:#3a3d42; --muted:#5b6068;
-  --rule:#d9d6ce; --signal:#ff5a1f; --signal-hover:#ff7438; --signal-ink:#111214; --signal-text:#b23a0a; --signal-soft:#ffe9df;
+  --rule:#d9d6ce; --signal:#5a2a82; --signal-hover:#6d3a98; --signal-ink:#fff; --signal-text:#5a2a82; --signal-soft:#efe6f7;
   --buy:#111214; --buy-hover:#2c2f34; --buy-ink:#fff; --band:#111214; --band-ink:#f4f3ef;
   --warn-ink:#8a5a00; --warn-bg:#fdf1d6;
   --shadow-float:0 18px 40px -18px rgba(17,18,20,.45);
@@ -16,7 +16,7 @@
 }
 @media (prefers-color-scheme:dark){:root{
   --paper:#0e0f11; --paper-2:#17191c; --surface:#141619; --ink:#ecedee; --ink-2:#c9cdd2; --muted:#a0a6ae;
-  --rule:#2a2d32; --signal:#ff6a2e; --signal-hover:#ff8a55; --signal-ink:#0e0f11; --signal-text:#ff8a55; --signal-soft:#2a1810;
+  --rule:#2a2d32; --signal:#b98be0; --signal-hover:#c9a6ec; --signal-ink:#0e0f11; --signal-text:#b98be0; --signal-soft:#241a30;
   --buy:#ecedee; --buy-hover:#fff; --buy-ink:#0e0f11; --band:#17191c; --band-ink:#ecedee;
   --warn-ink:#fcd34d; --warn-bg:#3a2a0c; --shadow-float:0 18px 40px -16px rgba(0,0,0,.7);
   --tile-l:70%; --tile-a:.18;
@@ -64,9 +64,9 @@ p{text-wrap:pretty}
 .top{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--rule)}
 .top-in{display:flex;align-items:center;gap:6px;height:var(--header-h)}
 .brand{display:inline-flex;align-items:center;gap:10px;margin-right:auto;text-decoration:none;border-radius:var(--r-s)}
-.brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:var(--r-s);background:var(--signal);color:#fff}
-.brand-mark svg{width:19px;height:19px;fill:#fff;stroke:#fff;stroke-width:1.2}
-.brand-name{font-weight:820;font-stretch:108%;font-size:1.15rem;letter-spacing:-.02em}
+.brand-mark{width:34px;height:34px;flex:none}
+.bm-f{fill:var(--signal)}.bm-s{stroke:var(--signal)}.bm-p{fill:var(--signal-ink)}.bm-q{stroke:var(--signal-ink)}
+.brand-name{font-weight:820;font-stretch:112%;font-size:1.3rem;letter-spacing:-.015em;margin-left:-4px}
 .brand-name b{color:var(--signal-text);font-weight:inherit}
 .top-nav{display:none;gap:2px;margin-right:6px}
 .top-nav a,.top-nav button{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:.4em .75em;border:0;border-radius:var(--r-s);background:none;color:var(--ink-2);font:inherit;font-weight:560;font-size:.95rem;text-decoration:none;cursor:pointer}

@@ -1,4 +1,4 @@
-// Techollos: capa dinámica de la web estática. Sin cookies ni rastreo (favoritos en localStorage del navegador).
+// Brevazo: capa dinámica de la web estática. Sin cookies ni rastreo (favoritos en localStorage del navegador).
 // - fechas relativas y aviso de oferta antigua      - favoritos (❤) y compartir
 // - portada: búsqueda instantánea, orden, guardadas, "ver más" y ofertas nuevas en directo (deals.json)
 // - service worker: instalable como app y funciona sin conexión
@@ -31,16 +31,16 @@
   }
 
   // ---------------------------------------------------------------- medición (sin cookies)
-  // Cada evento se añade a window.techollosEvents (útil para depurar) y, solo si la página declara
+  // Cada evento se añade a window.brevazoEvents (útil para depurar) y, solo si la página declara
   // <meta name="analytics" content="URL">, se envía con sendBeacon a ese endpoint (p. ej. GoatCounter).
   // Nada de identificadores: solo el nombre del evento, la página y datos del propio evento.
   var endpointMeta = document.querySelector('meta[name="analytics"]');
   var endpoint = endpointMeta ? endpointMeta.getAttribute("content") : "";
-  window.techollosEvents = window.techollosEvents || [];
+  window.brevazoEvents = window.brevazoEvents || [];
   function track(name, props) {
     var ev = { e: name, p: location.pathname, t: Date.now() };
     for (var k in props || {}) ev[k] = props[k];
-    window.techollosEvents.push(ev);
+    window.brevazoEvents.push(ev);
     if (!endpoint || !navigator.sendBeacon) return;
     try { navigator.sendBeacon(endpoint, JSON.stringify(ev)); } catch (e) {}
   }
@@ -84,7 +84,7 @@
   }
 
   // ---------------------------------------------------------------- favoritos
-  var FKEY = "techollos:favs";
+  var FKEY = "techollos:favs";  // clave heredada de Techollos: se mantiene para no perder los favoritos guardados
   var favs = store(FKEY) || [];
   function isFav(slug) { return favs.indexOf(slug) !== -1; }
   function bindFavs(scope) {
