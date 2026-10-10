@@ -144,14 +144,21 @@
         (specs.length ? '<ul class="plate-specs" aria-label="Datos clave">' + specs.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
         "</div>";
     }
+    // Precio del Radar (mismo formato que site_render.price_html)
+    function eur(v) { return v.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"; }
+    function price(d) {
+      if (!d.p) return "";
+      return '<div class="price"><p><strong>' + eur(d.p) + "</strong>" +
+        (d.pw ? '<span class="price-off">−' + Math.round((1 - d.p / d.pw) * 100) + ' %</span><s class="price-was">' + eur(d.pw) + "</s>" : "") + "</p></div>";
+    }
     function card(d) {
       return '<article class="deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' + plate(d) +
         '<div class="deal-body"><h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '">' + esc(d.t) + "</a></h3>" +
-        '<p class="deal-sum">' + esc(d.m) + "</p>" +
+        '<p class="deal-sum">' + esc(d.m) + "</p>" + price(d) +
         '<div class="deal-foot"><p class="deal-meta"><span>' + esc(d.st || "Amazon") + '</span><time datetime="' + esc(d.d) + '" data-rel>' +
         new Date(d.d).toLocaleDateString("es-ES") + "</time></p>" +
         '<a class="btn btn-buy btn-sm" href="' + esc(d.u) + '" rel="sponsored nofollow noopener" target="_blank" data-track="amazon" data-place="card" data-slug="' + esc(d.s) +
-        '">Ver precio<span class="sr-only"> de ' + esc(d.t) + " en " + esc(d.st || "Amazon") + " (abre en otra pestaña)</span> " + tpl('[data-icon="arrow"]') + "</a></div></div>" +
+        '">' + (d.p ? "Ver oferta" : "Ver precio") + '<span class="sr-only"> de ' + esc(d.t) + " en " + esc(d.st || "Amazon") + " (abre en otra pestaña)</span> " + tpl('[data-icon="arrow"]') + "</a></div></div>" +
         '<button class="fav" type="button" data-fav="' + esc(d.s) + '" aria-pressed="false" aria-label="Guardar: ' + esc(d.t) + '">' +
         tpl('[data-icon="heart"]') + "</button></article>";
     }

@@ -184,6 +184,17 @@ html:has(.menu[open]){overflow:hidden}
 .fav[aria-pressed="true"],.fav-lg[aria-pressed="true"]{color:#e11d48}
 .fav[aria-pressed="true"] svg,.fav-lg[aria-pressed="true"] svg{fill:currentColor}
 @media (prefers-color-scheme:dark){.fav[aria-pressed="true"],.fav-lg[aria-pressed="true"],.fav:hover{color:#fb7185}}
+/* precio comprobado por el Radar */
+.price{position:relative;z-index:1}
+.price>p:first-child{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.price strong{font-size:1.35rem;font-weight:820;font-stretch:105%;letter-spacing:-.01em;font-variant-numeric:tabular-nums lining-nums}
+.price-off{padding:.1em .45em;border-radius:var(--r-xs);background:var(--signal-soft);color:var(--signal-text);font-size:.85rem;font-weight:750;font-variant-numeric:tabular-nums}
+.price-was{color:var(--muted);font-size:.88rem;font-variant-numeric:tabular-nums}
+.price-lg{margin:0 0 16px}
+.price-lg strong{font-size:clamp(1.9rem,1.6rem + 1vw,2.4rem)}
+.price-at{margin:6px 0 0;display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.85rem}
+.price-at svg{width:16px;height:16px;flex:none}
+.buybar-p{font-weight:820;font-variant-numeric:tabular-nums;white-space:nowrap}
 .stale-tag{display:inline-block;padding:0 .45em;border-radius:var(--r-xs);font-size:.72rem;letter-spacing:.04em;color:var(--warn-ink);background:var(--warn-bg)}
 .deal.stale .deal-title,.deal.stale .plate-visual{opacity:.7}
 
@@ -197,7 +208,9 @@ html:has(.menu[open]){overflow:hidden}
 .plate-specs li{padding:.2em .5em;border-radius:var(--r-xs);background:var(--ink);color:var(--paper);font-size:.82rem;font-weight:700;font-stretch:90%;font-variant-numeric:tabular-nums lining-nums;letter-spacing:.01em}
 .plate.has-img{background:#fff}
 .plate.has-img .plate-visual{inset:12% 8% 18%;width:auto;max-width:none;display:grid;place-items:center}
-.plate.has-img img{max-width:100%;max-height:100%;object-fit:contain}
+.plate.has-img .plate-visual{display:block;top:28%}
+.plate.has-img .plate-cat,.plate.has-img .plate-brand{position:relative;z-index:1}
+.plate.has-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .plate.has-img .plate-cat,.plate.has-img .plate-brand{color:#111214}
 @media (max-width:639px){.deal .plate{aspect-ratio:5/2}.deal .plate-visual{width:44%;bottom:8%}}
 .plate-xl{aspect-ratio:4/3;padding:22px 24px;border-radius:var(--r-l)}
