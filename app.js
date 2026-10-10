@@ -148,10 +148,10 @@
       return '<article class="deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' + plate(d) +
         '<div class="deal-body"><h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '">' + esc(d.t) + "</a></h3>" +
         '<p class="deal-sum">' + esc(d.m) + "</p>" +
-        '<div class="deal-foot"><p class="deal-meta"><span>Amazon</span><time datetime="' + esc(d.d) + '" data-rel>' +
+        '<div class="deal-foot"><p class="deal-meta"><span>' + esc(d.st || "Amazon") + '</span><time datetime="' + esc(d.d) + '" data-rel>' +
         new Date(d.d).toLocaleDateString("es-ES") + "</time></p>" +
         '<a class="btn btn-buy btn-sm" href="' + esc(d.u) + '" rel="sponsored nofollow noopener" target="_blank" data-track="amazon" data-place="card" data-slug="' + esc(d.s) +
-        '">Ver precio<span class="sr-only"> de ' + esc(d.t) + " en Amazon (abre en otra pestaña)</span> " + tpl('[data-icon="arrow"]') + "</a></div></div>" +
+        '">Ver precio<span class="sr-only"> de ' + esc(d.t) + " en " + esc(d.st || "Amazon") + " (abre en otra pestaña)</span> " + tpl('[data-icon="arrow"]') + "</a></div></div>" +
         '<button class="fav" type="button" data-fav="' + esc(d.s) + '" aria-pressed="false" aria-label="Guardar: ' + esc(d.t) + '">' +
         tpl('[data-icon="heart"]') + "</button></article>";
     }
