@@ -90,6 +90,10 @@
       tg.setAttribute("data-request-access", "write");  // permite al bot enviarte las alertas
       tg.setAttribute("data-auth-url", new URL(root + "api/telegram-auth", location.href).href);
       tg.onload = function () { var p = document.querySelector("#tg-login .muted"); if (p) p.remove(); };
+      new MutationObserver(function (_, obs) {  // el iframe del botón lo crea Telegram: le ponemos título (accesibilidad)
+        var f = document.querySelector("#tg-login iframe");
+        if (f) { f.title = "Iniciar sesión con Telegram"; obs.disconnect(); }
+      }).observe(document.getElementById("tg-login"), { childList: true, subtree: true });
       document.getElementById("tg-login").appendChild(tg);
       var lf = document.getElementById("login");
       if (lf) lf.addEventListener("submit", function (ev) {
@@ -186,7 +190,7 @@
       log.appendChild(li); li.scrollIntoView({ block: "nearest" }); return li;
     }
     loadMe().then(function (d) {
-      if (!d.logged) left.innerHTML = '<a href="' + root + 'cuenta/">Entra con tu email</a> para usar el asistente (3 preguntas gratis al día).';
+      if (!d.logged) left.innerHTML = '<a href="' + root + 'cuenta/">Entra con tu cuenta</a> para usar el asistente (3 preguntas gratis al día).';
       else left.textContent = d.assistant_left + " preguntas disponibles hoy" + (d.premium ? " · Premium" : "");
     });
     add("assistant", "<p>¡Hola! Dime qué quieres comprar, para qué lo vas a usar y, si quieres, tu presupuesto aproximado.</p>");
