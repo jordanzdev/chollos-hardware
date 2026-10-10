@@ -3,8 +3,9 @@
 (function () {
   "use strict";
   var root = document.body.getAttribute("data-root") || "./";
-  var cfgMeta = document.querySelector('meta[name="bz-paddle"]');
-  var PADDLE = cfgMeta ? JSON.parse(cfgMeta.getAttribute("content")) : {};
+  var cfgMeta = document.querySelector('meta[name="bz-config"]');
+  var CFG = cfgMeta ? JSON.parse(cfgMeta.getAttribute("content")) : {};
+  var PADDLE = CFG.paddle || {};
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -53,9 +54,9 @@
     (me ? Promise.resolve(me) : loadMe()).then(function (d) {
       if (!d.logged) { location.href = root + "cuenta/?siguiente=premium"; return; }
       if (d.premium) { location.href = root + "cuenta/"; return; }
-      if (!PADDLE.token || !PADDLE.price) { alert("El pago aún no está activado."); return; }
+      if (!CFG.payments) { location.href = root + "premium"; return; }
       loadPaddle().then(function (P) {
-        P.Checkout.open({ items: [{ priceId: PADDLE.price, quantity: 1 }], customer: { email: d.email },
+        P.Checkout.open({ items: [{ priceId: PADDLE.price, quantity: 1 }], customer: d.email ? { email: d.email } : undefined,
                           customData: { user_id: String(d.id) }, settings: { locale: "es", displayMode: "overlay" } });
       });
     });
@@ -72,14 +73,26 @@
   function renderAccount(d) {
     var q = new URLSearchParams(location.search);
     if (!d.logged) {
+      var errors = { enlace: "Ese enlace ha caducado o ya se usó. Pide uno nuevo.", telegram: "No hemos podido comprobar tu acceso con Telegram. Inténtalo de nuevo." };
       box.innerHTML =
-        (q.get("error") ? '<p class="notice notice-err">Ese enlace ha caducado o ya se usó. Pide uno nuevo.</p>' : "") +
-        '<p class="lead">Entra con tu email: te mandamos un enlace y listo, sin contraseñas.</p>' +
-        '<form class="login" id="login"><label for="login-email">Email</label>' +
-        '<div class="login-row"><input id="login-email" type="email" required autocomplete="email" placeholder="tu@email.com">' +
-        '<button class="btn btn-primary" type="submit">Enviarme el enlace</button></div></form>' +
-        '<p class="fine">Usamos tu email solo para tu cuenta y, si las activas, tus alertas. <a href="' + root + 'privacidad.html">Privacidad</a>.</p>';
-      document.getElementById("login").addEventListener("submit", function (ev) {
+        (errors[q.get("error")] ? '<p class="notice notice-err">' + errors[q.get("error")] + "</p>" : "") +
+        '<p class="lead">Entra para usar el asistente' + (CFG.payments ? ", tus alertas y Premium" : " y, muy pronto, Premium") + ". Sin contraseñas.</p>" +
+        '<div class="tg-login" id="tg-login"><p class="muted">Cargando el botón de Telegram…</p></div>' +
+        (CFG.email ? '<p class="or">o con tu email</p><form class="login" id="login"><label for="login-email">Email</label>' +
+          '<div class="login-row"><input id="login-email" type="email" required autocomplete="email" placeholder="tu@email.com">' +
+          '<button class="btn btn-primary" type="submit">Enviarme el enlace</button></div></form>' : "") +
+        '<p class="fine">Con Telegram solo recibimos tu nombre e identificador público; nunca tu número. Si activas alertas, te avisamos por el bot. <a href="' + root + 'privacidad">Privacidad</a>.</p>';
+      var tg = document.createElement("script");
+      tg.async = true; tg.src = "https://telegram.org/js/telegram-widget.js?22";
+      tg.setAttribute("data-telegram-login", CFG.bot);
+      tg.setAttribute("data-size", "large");
+      tg.setAttribute("data-radius", "6");
+      tg.setAttribute("data-request-access", "write");  // permite al bot enviarte las alertas
+      tg.setAttribute("data-auth-url", new URL(root + "api/telegram-auth", location.href).href);
+      tg.onload = function () { var p = document.querySelector("#tg-login .muted"); if (p) p.remove(); };
+      document.getElementById("tg-login").appendChild(tg);
+      var lf = document.getElementById("login");
+      if (lf) lf.addEventListener("submit", function (ev) {
         ev.preventDefault();
         var btn = ev.target.querySelector("button"), email = document.getElementById("login-email").value;
         btn.disabled = true;
@@ -96,10 +109,11 @@
     var plan = d.premium
       ? '<p class="plan plan-premium"><b>Premium</b> · activo hasta el ' + date(d.premium_until) + (d.status === "past_due" ? " (pago pendiente)" : "") + "</p>"
       : '<p class="plan"><b>Gratis</b> · ' + d.assistant_left + ' preguntas al asistente hoy</p>' +
-        '<p><button class="btn btn-primary" type="button" data-checkout>Hazte Premium</button></p>';
+        (CFG.payments ? '<p><button class="btn btn-primary" type="button" data-checkout>Hazte Premium</button></p>'
+                      : '<p class="muted">Brevazo Premium llega muy pronto: brevazos antes que nadie, alertas y más preguntas al asistente. <a href="' + root + 'premium">Ver qué incluye</a>.</p>');
     box.innerHTML =
       (q.get("bienvenida") ? '<p class="notice">¡Bienvenido a Brevazo Premium! 💜</p>' : "") +
-      '<p class="muted">Has entrado como <b>' + esc(d.email) + "</b></p>" + plan +
+      '<p class="muted">Has entrado como <b>' + esc(d.name || d.email) + "</b>" + (d.telegram ? " (Telegram)" : "") + "</p>" + plan +
       '<h2>Asistente de compras</h2><p><a class="btn btn-ghost" href="' + root + 'asistente/">Abrir el asistente</a></p>' +
       '<h2>Alertas</h2><div id="alerts"></div>' +
       '<h2>Sesión</h2><p><button class="btn btn-ghost" type="button" id="logout">Cerrar sesión</button></p>';
@@ -112,7 +126,7 @@
   function renderAlerts(d) {
     var el = document.getElementById("alerts");
     if (!d.premium) {
-      el.innerHTML = '<p>Con Premium te avisamos por email en cuanto publicamos una oferta que encaja con lo que buscas (por ejemplo «RTX 5070» o «freidora de aire»).</p>';
+      el.innerHTML = '<p>Con Premium te avisamos en cuanto publicamos una oferta que encaja con lo que buscas (por ejemplo «RTX 5070» o «freidora de aire»).</p>';
       return;
     }
     api("alertas").then(function (r) {
@@ -149,7 +163,7 @@
 
   function md(text) {  // Markdown mínimo y seguro: enlaces internos, negritas, listas y saltos de línea
     var html = esc(text)
-      .replace(/\[([^\]]+)\]\(((?:ofertas|guias)\/[a-z0-9\-\/]+\.html)\)/g, function (_, t, href) {
+      .replace(/\[([^\]]+)\]\(((?:ofertas|guias)\/[a-z0-9\-\/]+?)(?:\.html)?\)/g, function (_, t, href) {
         return '<a href="' + root + href + '">' + t + "</a>";
       })
       .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");

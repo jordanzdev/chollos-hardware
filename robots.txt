@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /cuenta/
-Sitemap: https://jordanzdev.github.io/chollos-hardware/sitemap.xml
+Sitemap: https://brevazo.pages.dev/sitemap.xml

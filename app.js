@@ -146,7 +146,7 @@
     }
     function card(d) {
       return '<article class="deal" data-cat="' + esc(d.c) + '" data-slug="' + esc(d.s) + '">' + plate(d) +
-        '<div class="deal-body"><h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '.html">' + esc(d.t) + "</a></h3>" +
+        '<div class="deal-body"><h3 class="deal-title"><a class="deal-link" href="' + root + "ofertas/" + esc(d.s) + '">' + esc(d.t) + "</a></h3>" +
         '<p class="deal-sum">' + esc(d.m) + "</p>" +
         '<div class="deal-foot"><p class="deal-meta"><span>Amazon</span><time datetime="' + esc(d.d) + '" data-rel>' +
         new Date(d.d).toLocaleDateString("es-ES") + "</time></p>" +
