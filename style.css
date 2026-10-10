@@ -195,6 +195,13 @@ html:has(.menu[open]){overflow:hidden}
 .price-at{margin:6px 0 0;display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.85rem}
 .price-at svg{width:16px;height:16px;flex:none}
 .buybar-p{font-weight:820;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* oferta terminada: la ficha se queda con el aviso */
+.ended-tag{font-style:normal;padding:0 .45em;border-radius:var(--r-xs);color:var(--warn-ink);background:var(--warn-bg);letter-spacing:.04em}
+.deal.ended .deal-title,.deal.ended .plate{opacity:.6}
+.deal.ended .plate{filter:grayscale(1)}
+.ended-note{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;padding:12px 14px;border-radius:var(--r-s);background:var(--warn-bg);color:var(--warn-ink);font-size:.95rem;line-height:1.5}
+.ended-note p{margin:0}
+.ended-note svg{flex:none;width:20px;height:20px;margin-top:2px}
 .stale-tag{display:inline-block;padding:0 .45em;border-radius:var(--r-xs);font-size:.72rem;letter-spacing:.04em;color:var(--warn-ink);background:var(--warn-bg)}
 .deal.stale .deal-title,.deal.stale .plate-visual{opacity:.7}
 

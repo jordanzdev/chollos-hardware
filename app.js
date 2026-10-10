@@ -74,7 +74,7 @@
       if (r) t.textContent = r;
       var days = (new Date() - new Date(iso)) / 864e5;
       var card = t.closest(".deal, .deal-page");
-      if (days > STALE_DAYS && card && !card.querySelector(".stale-tag")) {
+      if (days > STALE_DAYS && card && !card.classList.contains("ended") && !card.querySelector(".stale-tag, .ended-note")) {
         card.classList.add("stale");
         var tag = document.createElement("span");
         tag.className = "stale-tag"; tag.textContent = "Puede haber terminado";
